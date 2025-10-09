@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Clock, CheckCircle, AlertCircle, RefreshCw, Loader2, User, Calendar } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
+// API Base URL
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const OrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -102,7 +105,7 @@ const OrdersPage = () => {
       }
 
       const statusParam = statusFilter === "all" ? "" : statusFilter;
-      const response = await fetch(`/api/orders/restaurant?status=${statusParam}&limit=100`, {
+      const response = await fetch(`${API_URL}/api/orders/restaurant?status=${statusParam}&limit=100`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -173,7 +176,7 @@ const OrdersPage = () => {
         return;
       }
 
-      const response = await fetch(`/api/orders/${orderId}/status`, {
+      const response = await fetch(`${API_URL}/api/orders/${orderId}/status`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
