@@ -75,7 +75,7 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
 
     console.log("✅ Connecting socket with user ID:", userId);
 
-    const socketInstance = io("http://localhost:5000", {
+    const socketInstance = io("https://restaurant-ordering-system-9jcp.onrender.com", {
       transports: ["websocket", "polling"],
     });
 
