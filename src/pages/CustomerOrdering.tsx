@@ -27,9 +27,14 @@ import {
 const API_BASE_URL = "https://restaurant-ordering-system-9jcp.onrender.com/api";
 
 const CustomerOrderPage = () => {
+  // FIXED: Better URL parsing with debugging
   const getTableIdFromUrl = () => {
-    const pathSegments = window.location.pathname.split('/');
-    return pathSegments[pathSegments.length - 1];
+    const pathSegments = window.location.pathname.split('/').filter(segment => segment);
+    console.log('🔍 URL pathname:', window.location.pathname);
+    console.log('🔍 Path segments:', pathSegments);
+    const tableId = pathSegments[pathSegments.length - 1];
+    console.log('🔍 Extracted Table ID:', tableId);
+    return tableId;
   };
 
   const [tableId] = useState(getTableIdFromUrl());
@@ -58,18 +63,35 @@ const CustomerOrderPage = () => {
       try {
         setLoading(true);
         
-        const response = await fetch(`${API_BASE_URL}/menu/table/${tableId}`);
+        // FIXED: Validate tableId exists
+        if (!tableId || tableId.trim() === '') {
+          console.error("❌ No table ID found in URL");
+          alert("Invalid table link. Please scan the QR code again.");
+          setLoading(false);
+          return;
+        }
+
+        console.log('📡 Fetching menu for table ID:', tableId);
+        const url = `${API_BASE_URL}/menu/table/${tableId}`;
+        console.log('📡 Full URL:', url);
+        
+        const response = await fetch(url);
         const data = await response.json();
+        
+        console.log('📡 Response:', data);
         
         if (data.success) {
           setRestaurantData(data.data.restaurant);
           setTableData(data.data.table);
           setMenuSections(data.data.menu);
+          console.log('✅ Menu loaded successfully');
         } else {
-          console.error("Failed to load menu:", data.message);
+          console.error("❌ Failed to load menu:", data.message);
+          alert(`Failed to load menu: ${data.message}`);
         }
       } catch (error) {
-        console.error("Error loading menu:", error);
+        console.error("❌ Error loading menu:", error);
+        alert("Failed to load menu. Please check your connection and try again.");
       } finally {
         setLoading(false);
       }
